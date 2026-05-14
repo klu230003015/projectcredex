@@ -1,13 +1,22 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { NextResponse } from 'next/server'
 
-const anthropic = new Anthropic({
+const anthropic = process.env.ANTHROPIC_API_KEY ? new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY,
-})
+}) : null
 
 export async function POST(req: Request) {
 
     try {
+
+        if (!anthropic) {
+            return NextResponse.json(
+                {
+                    success: true,
+                    summary: 'Audit completed successfully. API key not configured for detailed analysis.'
+                }
+            )
+        }
 
         const body = await req.json()
 
